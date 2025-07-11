@@ -1,8 +1,13 @@
 <?php
 require_once 'models/Estudiante.php';
+require_once 'config/database.php';
 
-class EstudianteController {
-    public function mostrarFormulario() {
+class EstudianteController
+{
+    public function mostrarFormulario()
+    {
+        $estudiante = null;
+
         if (isset($_GET['id'])) {
             $estudiante = Estudiante::buscarPorId($_GET['id']);
             if (!$estudiante) {
@@ -10,10 +15,12 @@ class EstudianteController {
                 exit;
             }
         }
+
         require_once 'views/registro.php';
     }
 
-    public function guardar() {
+    public function guardar()
+    {
         $data = [
             'nombre' => $_POST['nombre'] ?? '',
             'ficha' => $_POST['ficha'] ?? '',
@@ -32,12 +39,11 @@ class EstudianteController {
             'observaciones' => $_POST['observaciones'] ?? ''
         ];
 
-        $estudiante = new Estudiante();
-
         if (!empty($_POST['id'])) {
             $resultado = Estudiante::actualizar($_POST['id'], $data);
             $mensaje = $resultado ? 'Estudiante actualizado correctamente' : 'Error al actualizar';
         } else {
+            $estudiante = new Estudiante();
             $resultado = $estudiante->registrar($data);
             $mensaje = $resultado ? 'Estudiante registrado correctamente' : 'Error al registrar';
         }
@@ -46,14 +52,17 @@ class EstudianteController {
         exit;
     }
 
-    public function mostrarListado() {
+    public function mostrarListado()
+    {
         $estudiante = new Estudiante();
         $estudiantes = $estudiante->obtenerTodos();
         require_once 'views/listado.php';
     }
 
-    public function editar($id) {
+    public function editar($id)
+    {
         $estudiante = Estudiante::buscarPorId($id);
+
         if ($estudiante) {
             require 'views/registro.php';
         } else {
@@ -62,14 +71,16 @@ class EstudianteController {
         }
     }
 
-    public function eliminar($id) {
+    public function eliminar($id)
+    {
         $resultado = Estudiante::eliminar($id);
         $mensaje = $resultado ? 'Estudiante eliminado correctamente' : 'Error al eliminar';
         echo "<script>alert('$mensaje'); window.location='index.php?page=listado';</script>";
         exit;
     }
 
-    public function contarEstudiantes() {
+    public function contarEstudiantes()
+    {
         $conn = (new Database())->getConnection();
         $stmt = $conn->query("SELECT COUNT(*) AS total FROM estudiantes");
         $row = $stmt->fetch(PDO::FETCH_ASSOC);

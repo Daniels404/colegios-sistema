@@ -41,7 +41,9 @@ if (session_status() === PHP_SESSION_NONE) {
             <div class="card shadow-sm border-start border-primary border-4">
                 <div class="card-body">
                     <h5 class="card-title"><i class="bi bi-people-fill me-2"></i>Total Estudiantes</h5>
-                    <p class="card-text display-6 fw-bold text-primary">--</p> <!-- Luego puedes mostrar cantidad real -->
+                  <p class="card-text display-6 fw-bold text-primary"><?= $total ?></p>
+                    <p class="card-text">Número total de estudiantes registrados en el sistema.</p>
+                    <a href="index.php?page=listado" class="btn btn-primary mt-2">Ver listado</a>
                 </div>
             </div>
         </div>
