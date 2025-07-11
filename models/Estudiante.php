@@ -1,27 +1,22 @@
 <?php
-require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../confi/database.php';
 
 class Estudiante {
     private $conn;
-    private $table = "estudiantes";
 
     public function __construct() {
-        $database = new Database();
-        $this->conn = $database->getConnection();
+        $this->conn = Database::getConnection();
     }
 
+    // 🔹 Registrar estudiante
     public function registrar($data) {
-        $query = "INSERT INTO " . $this->table . " 
-            (nombre, ficha, rector, nombre_alumno, documento_estudiante, grado, tipo_documento, direccion, numero_contacto, correo, correo_inst, jornada, dias, colegio, observaciones)
-            VALUES 
-            (:nombre, :ficha, :rector, :nombre_alumno, :documento_estudiante, :grado, :tipo_documento, :direccion, :numero_contacto, :correo, :correo_inst, :jornada, :dias, :colegio, :observaciones)";
+        $sql = "INSERT INTO estudiantes (nombre, ficha, nombre_alumno, documento_estudiante, grado, tipo_documento, direccion, numero_contacto, correo, correo_inst, jornada, dias, colegio, rector, observaciones, colegio_id)
+                VALUES (:nombre, :ficha, :nombre_alumno, :documento_estudiante, :grado, :tipo_documento, :direccion, :numero_contacto, :correo, :correo_inst, :jornada, :dias, :colegio, :rector, :observaciones, :colegio_id)";
         
-        $stmt = $this->conn->prepare($query);
-
+        $stmt = $this->conn->prepare($sql);
         return $stmt->execute([
             ':nombre' => $data['nombre'],
             ':ficha' => $data['ficha'],
-            ':rector' => $data['rector'],
             ':nombre_alumno' => $data['nombre_alumno'],
             ':documento_estudiante' => $data['documento_estudiante'],
             ':grado' => $data['grado'],
@@ -33,50 +28,38 @@ class Estudiante {
             ':jornada' => $data['jornada'],
             ':dias' => $data['dias'],
             ':colegio' => $data['colegio'],
-            ':observaciones' => $data['observaciones']
+            ':rector' => $data['rector'],
+            ':observaciones' => $data['observaciones'],
+            ':colegio_id' => $data['colegio_id'],
         ]);
     }
 
-    public function obtenerTodos() {
-        $query = "SELECT * FROM " . $this->table . " ORDER BY fecha_registro DESC";
-        $stmt = $this->conn->prepare($query);
+    // 🔹 Buscar estudiante por ID con nombre del colegio
+    public function buscarPorIdConColegio($id) {
+        $sql = "SELECT e.*, c.nombre AS colegio_nombre
+                FROM estudiantes e
+                LEFT JOIN colegios c ON e.colegio_id = c.id
+                WHERE e.id = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $id);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public static function buscarPorId($id) {
-        $db = Database::getConnection();
-        $sql = "SELECT * FROM estudiantes WHERE id = ?";
-        $stmt = $db->prepare($sql);
-        $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-  public static function actualizar($id, $datos) {
-    $db = Database::getConnection();
-    $sql = "UPDATE estudiantes SET 
-        nombre = ?, ficha = ?, rector = ?, nombre_alumno = ?, 
-        documento_estudiante = ?, grado = ?, tipo_documento = ?, 
-        direccion = ?, numero_contacto = ?, correo = ?, 
-        correo_inst = ?, jornada = ?, dias = ?, colegio = ?, 
-        observaciones = ?
-        WHERE id = ?";
-    $stmt = $db->prepare($sql);
-    return $stmt->execute([
-        $datos['nombre'], $datos['ficha'], $datos['rector'], $datos['nombre_alumno'],
-        $datos['documento_estudiante'], $datos['grado'], $datos['tipo_documento'],
-        $datos['direccion'], $datos['numero_contacto'], $datos['correo'],
-        $datos['correo_inst'], $datos['jornada'], $datos['dias'], $datos['colegio'],
-        $datos['observaciones'], $id
-    ]);
+    // 🔹 Listado con colegio
+    public function obtenerTodosConColegios() {
+        $sql = "SELECT e.*, c.nombre AS colegio_nombre
+                FROM estudiantes e
+                LEFT JOIN colegios c ON e.colegio_id = c.id";
+        $stmt = $this->conn->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function contarEstudiantes() {
+    $sql = "SELECT COUNT(*) as total FROM estudiantes";
+    $stmt = $this->conn->query($sql);
+    $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $resultado['total'] ?? 0;
 }
 
-
-
-    public static function eliminar($id) {
-        $db = Database::getConnection();
-        $sql = "DELETE FROM estudiantes WHERE id = ?";
-        $stmt = $db->prepare($sql);
-        return $stmt->execute([$id]);
-    }
 }

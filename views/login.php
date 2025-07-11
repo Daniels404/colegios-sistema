@@ -1,3 +1,11 @@
+<?php
+require_once 'models/Colegio.php';
+$colegioModel = new Colegio();
+$colegios = $colegioModel->obtenerTodos();
+?>
+
+
+
 <?php //session_start(); ?>
 <!DOCTYPE html>
 <html lang="es">

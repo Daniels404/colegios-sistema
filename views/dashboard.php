@@ -22,8 +22,9 @@ if (session_status() === PHP_SESSION_NONE) {
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item"><a class="nav-link active" href="index.php?page=dashboard">Inicio</a></li>
-                <li class="nav-item"><a class="nav-link" href="index.php?page=registro">Registrar</a></li>
-                <li class="nav-item"><a class="nav-link" href="index.php?page=listado">Listado</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.php?page=registro">Registrar Estudiante</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.php?page=listado">Listado Estudiantes</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.php?page=preregistro"><i class="bi bi-building-add"></i> Registrar Colegio</a></li>
             </ul>
             <span class="navbar-text text-white me-3">Bienvenido, <?= $_SESSION['usuario'] ?? '' ?></span>
             <a href="index.php?page=logout" class="btn btn-outline-light btn-sm">Cerrar sesión</a>
@@ -36,19 +37,19 @@ if (session_status() === PHP_SESSION_NONE) {
     <h2 class="mb-4">👋 Bienvenido al Sistema Institucional</h2>
 
     <div class="row g-4">
-        <!-- Tarjeta 1 -->
+        <!-- Tarjeta 1: Total Estudiantes -->
         <div class="col-md-4">
             <div class="card shadow-sm border-start border-primary border-4">
                 <div class="card-body">
                     <h5 class="card-title"><i class="bi bi-people-fill me-2"></i>Total Estudiantes</h5>
-                  <p class="card-text display-6 fw-bold text-primary"><?= $total ?></p>
+                    <p class="card-text display-6 fw-bold text-primary"><?= $total ?></p>
                     <p class="card-text">Número total de estudiantes registrados en el sistema.</p>
                     <a href="index.php?page=listado" class="btn btn-primary mt-2">Ver listado</a>
                 </div>
             </div>
         </div>
 
-        <!-- Tarjeta 2 -->
+        <!-- Tarjeta 2: Registrar Estudiante -->
         <div class="col-md-4">
             <div class="card shadow-sm border-start border-success border-4">
                 <div class="card-body">
@@ -58,12 +59,24 @@ if (session_status() === PHP_SESSION_NONE) {
             </div>
         </div>
 
-        <!-- Tarjeta 3 -->
+        <!-- Tarjeta 3: Ver Listado -->
         <div class="col-md-4">
             <div class="card shadow-sm border-start border-info border-4">
                 <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-card-list me-2"></i>Ver Listado</h5>
+                    <h5 class="card-title"><i class="bi bi-card-list me-2"></i>Listado de Estudiantes</h5>
                     <a href="index.php?page=listado" class="btn btn-info mt-2 text-white">Ver estudiantes</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta 4: Total Colegios -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border-start border-warning border-4">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-building me-2"></i>Total Colegios</h5>
+                    <p class="card-text display-6 fw-bold text-warning"><?= $totalColegios ?></p>
+                    <p class="card-text">Número total de colegios registrados en el sistema.</p>
+                    <a href="index.php?page=preregistro" class="btn btn-warning mt-2 text-white">Ver colegios</a>
                 </div>
             </div>
         </div>

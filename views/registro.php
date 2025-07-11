@@ -1,208 +1,145 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once 'models/Colegio.php';
+$colegioModel = new Colegio();
+$colegios = $colegioModel->obtenerTodos();
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title><?= isset($estudiante) ? 'Editar Estudiante' : 'Registrar Estudiante' ?></title>
+    <title>Registrar Estudiante</title>
 
-    <!-- Bootstrap 5 -->
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-
-    <!-- Animate.css -->
-    <link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
-
     <!-- Estilos personalizados -->
     <link href="css/estilos.css" rel="stylesheet">
-
-    <!-- Tipografía clara (Google Fonts - Open Sans) -->
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
-
-    <style>
-        body {
-            font-family: 'Open Sans', sans-serif;
-            background-color: #f4f7fc;
-        }
-
-        .navbar {
-            background-color: #003366;
-        }
-
-        .navbar-brand, .nav-link, .navbar-text {
-            color: #ffffff !important;
-        }
-
-        .navbar-brand i {
-            margin-right: 5px;
-        }
-
-        h2 {
-            color: #003366;
-            font-weight: 700;
-        }
-
-        .form-control, .form-select {
-            border-radius: 0.375rem;
-        }
-
-        .btn-success {
-            background-color: #28a745;
-            border: none;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-            border: none;
-        }
-
-        .footer {
-            margin-top: 60px;
-            padding: 20px;
-            background-color: #003366;
-            color: white;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-    </style>
 </head>
-<body class="p-4">
+<body class="p-4 bg-light">
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark mb-4">
+<!-- ✅ Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container">
-        <a class="navbar-brand" href="index.php?page=registro">
-            <i class="bi bi-mortarboard-fill"></i> Sistema Colegio
-        </a>
+        <a class="navbar-brand" href="index.php?page=dashboard"><i class="bi bi-mortarboard-fill"></i> Sistema Colegio</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link active" href="index.php?page=registro"><i class="bi bi-person-plus-fill me-1"></i>Registrar</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="index.php?page=listado"><i class="bi bi-card-list me-1"></i>Listado</a>
-                </li>
+                <li class="nav-item"><a class="nav-link active" href="index.php?page=registro">Registrar</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.php?page=listado">Listado</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.php?page=preregistro"><i class="bi bi-building-add"></i> Registrar Colegio</a></li>
             </ul>
-            <span class="navbar-text text-white me-3">
-                <i class="bi bi-person-circle me-1"></i><?= $_SESSION['usuario'] ?? '' ?>
-            </span>
-            <a href="index.php?page=logout" class="btn btn-outline-light btn-sm">
-                <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-            </a>
+            <span class="navbar-text text-white me-3">Bienvenido, <?= $_SESSION['usuario'] ?? '' ?></span>
+            <a href="index.php?page=logout" class="btn btn-outline-light btn-sm">Cerrar sesión</a>
         </div>
     </div>
 </nav>
 
-<!-- Formulario -->
+<!-- ✅ Formulario de Registro -->
 <div class="container">
-    <h2 class="mb-4"><?= isset($estudiante) ? 'Editar Estudiante' : 'Registrar Estudiante' ?></h2>
+    <h2 class="mb-4"><i class="bi bi-person-plus-fill me-1"></i> Registro de Estudiante</h2>
 
-    <form method="POST" action="index.php?page=guardar" class="shadow p-4 bg-white rounded animate__animated animate__fadeIn">
-        <input type="hidden" name="id" value="<?= $estudiante['id'] ?? '' ?>">
+    <form method="POST" action="index.php?page=guardar" class="bg-white p-4 rounded shadow">
 
+        <!-- Colegio -->
+        <div class="mb-3">
+            <label class="form-label">Colegio</label>
+            <select name="colegio_id" class="form-select" required>
+                <option value="">Seleccione una institución...</option>
+                <?php foreach ($colegios as $c): ?>
+                    <option value="<?= $c['id'] ?>"><?= $c['nombre'] ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <!-- Nombre del estudiante -->
+        <div class="mb-3">
+            <label class="form-label">Nombre del Estudiante</label>
+            <input type="text" name="nombre_alumno" class="form-control" required>
+        </div>
+
+        <!-- Tipo de documento y documento -->
         <div class="row mb-3">
             <div class="col-md-6">
-                <label>Nombre del Acudiente</label>
-                <input type="text" name="nombre" class="form-control" required value="<?= $estudiante['nombre'] ?? '' ?>">
+                <label class="form-label">Tipo de Documento</label>
+                <select name="tipo_documento" class="form-select" required>
+                    <option value="">Seleccione...</option>
+                    <option value="TI">Tarjeta de Identidad</option>
+                    <option value="CC">Cédula de Ciudadanía</option>
+                    <option value="CE">Cédula de Extranjería</option>
+                </select>
             </div>
             <div class="col-md-6">
-                <label>Ficha</label>
-                <input type="text" name="ficha" class="form-control" value="<?= $estudiante['ficha'] ?? '' ?>">
+                <label class="form-label">Número de Documento</label>
+                <input type="text" name="documento_estudiante" class="form-control" required>
             </div>
         </div>
 
+        <!-- RH y Jornada -->
         <div class="row mb-3">
             <div class="col-md-6">
-                <label>Nombre del Alumno</label>
-                <input type="text" name="nombre_alumno" class="form-control" required value="<?= $estudiante['nombre_alumno'] ?? '' ?>">
+                <label class="form-label">RH</label>
+                <input type="text" name="rh" class="form-control">
             </div>
             <div class="col-md-6">
-                <label>Documento del Estudiante</label>
-                <input type="text" name="documento_estudiante" class="form-control" required value="<?= $estudiante['documento_estudiante'] ?? '' ?>">
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <label>Grado</label>
-                <input type="text" name="grado" class="form-control" value="<?= $estudiante['grado'] ?? '' ?>">
-            </div>
-            <div class="col-md-4">
-                <label>Tipo de Documento</label>
-                <input type="text" name="tipo_documento" class="form-control" value="<?= $estudiante['tipo_documento'] ?? '' ?>">
-            </div>
-            <div class="col-md-4">
-                <label>Dirección</label>
-                <input type="text" name="direccion" class="form-control" value="<?= $estudiante['direccion'] ?? '' ?>">
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <label>Número de Contacto</label>
-                <input type="text" name="numero_contacto" class="form-control" value="<?= $estudiante['numero_contacto'] ?? '' ?>">
-            </div>
-            <div class="col-md-4">
-                <label>Correo</label>
-                <input type="email" name="correo" class="form-control" value="<?= $estudiante['correo'] ?? '' ?>">
-            </div>
-            <div class="col-md-4">
-                <label>Correo Institucional</label>
-                <input type="email" name="correo_inst" class="form-control" value="<?= $estudiante['correo_inst'] ?? '' ?>">
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label>Jornada</label>
+                <label class="form-label">Jornada</label>
                 <select name="jornada" class="form-select" required>
                     <option value="">Seleccione...</option>
-                    <option value="Mañana" <?= isset($estudiante['jornada']) && $estudiante['jornada'] == 'Mañana' ? 'selected' : '' ?>>Mañana</option>
-                    <option value="Tarde" <?= isset($estudiante['jornada']) && $estudiante['jornada'] == 'Tarde' ? 'selected' : '' ?>>Tarde</option>
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label>Días de Asistencia</label>
-                <select name="dias" class="form-select" required>
-                    <option value="">Seleccione...</option>
-                    <option value="Lunes y Miércoles" <?= isset($estudiante['dias']) && $estudiante['dias'] == 'Lunes y Miércoles' ? 'selected' : '' ?>>Lunes y Miércoles</option>
-                    <option value="Martes y Jueves" <?= isset($estudiante['dias']) && $estudiante['dias'] == 'Martes y Jueves' ? 'selected' : '' ?>>Martes y Jueves</option>
+                    <option value="Mañana">Mañana</option>
+                    <option value="Tarde">Tarde</option>
                 </select>
             </div>
         </div>
 
+        <!-- Asignatura -->
+        <div class="mb-3">
+            <label class="form-label">Asignatura</label>
+            <input type="text" name="asignatura" class="form-control">
+        </div>
+
+        <!-- Contacto y correo del estudiante -->
         <div class="row mb-3">
             <div class="col-md-6">
-                <label>Colegio</label>
-                <input type="text" name="colegio" class="form-control" required value="<?= $estudiante['colegio'] ?? '' ?>">
+                <label class="form-label">Correo</label>
+                <input type="email" name="correo" class="form-control">
             </div>
             <div class="col-md-6">
-                <label>Rector</label>
-                <input type="text" name="rector" class="form-control" value="<?= $estudiante['rector'] ?? '' ?>">
+                <label class="form-label">Número de Contacto</label>
+                <input type="text" name="numero_contacto" class="form-control">
             </div>
         </div>
 
-        <div class="mb-3">
-            <label>Observaciones</label>
-            <textarea name="observaciones" class="form-control" rows="3"><?= $estudiante['observaciones'] ?? '' ?></textarea>
+        <!-- Nombre y contacto del acudiente -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">Nombre del Acudiente</label>
+                <input type="text" name="nombre" class="form-control">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Contacto del Acudiente</label>
+                <input type="text" name="contacto" class="form-control">
+            </div>
         </div>
 
-        <button type="submit" class="btn btn-success">
-            <i class="bi bi-check-circle-fill me-1"></i>
-            <?= isset($estudiante) ? 'Actualizar Estudiante' : 'Registrar Estudiante' ?>
-        </button>
+        <!-- Observaciones -->
+        <div class="mb-3">
+            <label class="form-label">Observaciones</label>
+            <textarea name="observaciones" class="form-control" rows="3"></textarea>
+        </div>
 
-        <?php if (isset($estudiante)): ?>
-            <a href="index.php?page=listado" class="btn btn-secondary ms-2">
-                <i class="bi bi-x-circle me-1"></i> Cancelar
-            </a>
-        <?php endif; ?>
+        <!-- Botón -->
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-check-circle-fill me-1"></i> Registrar Estudiante
+        </button>
     </form>
 </div>
 
-<!-- Footer institucional -->
-<footer class="footer">
-    © <?= date('Y') ?> Sistema de Gestión Colegio - Desarrollado por Daniel Stiven Zapata
+<!-- ✅ Footer -->
+<footer class="text-center mt-5 py-3 bg-dark text-white">
+    <small>Sistema Colegio - Desarrollado por Daniel Zapata © <?= date('Y') ?></small>
 </footer>
 
 </body>
