@@ -2,49 +2,39 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+// Carga de modelos
 require_once 'models/Colegio.php';
+require_once 'models/Grado.php';
+require_once 'models/TipoDocumento.php';
+require_once 'models/RH.php';
+
+// Instancias de modelos
 $colegioModel = new Colegio();
+$gradosModel = new Grado();
+$tipoDocumentoModel = new TipoDocumento();
+$rhModel = new RH();
+
+// Consultas a BD
 $colegios = $colegioModel->obtenerTodos();
+$grados = $gradosModel->obtenerTodos();
+$tiposDocumento = $tipoDocumentoModel->obtenerTodos();
+$tiposRh = $rhModel->obtenerTodos();
+
+// Encabezado HTML del layout
+include 'views/layout/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Registrar Estudiante</title>
+<h2 class="mb-4 text-center"><i class="bi bi-person-plus-fill me-1"></i> Registro de Estudiante</h2>
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- Estilos personalizados -->
-    <link href="css/estilos.css" rel="stylesheet">
-</head>
-<body class="p-4 bg-light">
 
-<!-- ✅ Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-    <div class="container">
-        <a class="navbar-brand" href="index.php?page=dashboard"><i class="bi bi-mortarboard-fill"></i> Sistema Colegio</a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link active" href="index.php?page=registro">Registrar</a></li>
-                <li class="nav-item"><a class="nav-link" href="index.php?page=listado">Listado</a></li>
-                <li class="nav-item"><a class="nav-link" href="index.php?page=preregistro"><i class="bi bi-building-add"></i> Registrar Colegio</a></li>
-            </ul>
-            <span class="navbar-text text-white me-3">Bienvenido, <?= $_SESSION['usuario'] ?? '' ?></span>
-            <a href="index.php?page=logout" class="btn btn-outline-light btn-sm">Cerrar sesión</a>
-        </div>
-    </div>
-</nav>
-
-<!-- ✅ Formulario de Registro -->
-<div class="container">
-    <h2 class="mb-4"><i class="bi bi-person-plus-fill me-1"></i> Registro de Estudiante</h2>
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="alert alert-danger"><?= $_SESSION['error'] ?></div>
+        <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
 
     <form method="POST" action="index.php?page=guardar" class="bg-white p-4 rounded shadow">
-
-        <!-- Colegio -->
+        <!-- Colegio relacionado -->
         <div class="mb-3">
             <label class="form-label">Colegio</label>
             <select name="colegio_id" class="form-select" required>
@@ -55,92 +45,141 @@ $colegios = $colegioModel->obtenerTodos();
             </select>
         </div>
 
-        <!-- Nombre del estudiante -->
-        <div class="mb-3">
-            <label class="form-label">Nombre del Estudiante</label>
-            <input type="text" name="nombre_alumno" class="form-control" required>
-        </div>
-
-        <!-- Tipo de documento y documento -->
+        <!-- Nombre, ficha, grado -->
         <div class="row mb-3">
-            <div class="col-md-6">
-                <label class="form-label">Tipo de Documento</label>
-                <select name="tipo_documento" class="form-select" required>
+            <div class="col-md-4">
+                <label for="nombre_alumno" class="form-label">Nombre completo del estudiante</label>
+                <input type="text" id="nombre_alumno" name="nombre_alumno" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+                <label for="ficha" class="form-label">Ficha</label>
+                <input type="text" id="ficha" name="ficha" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+                <label for="grado" class="form-label">Grado</label>
+                <select id="grado" name="grado" class="form-select" required>
                     <option value="">Seleccione...</option>
-                    <option value="TI">Tarjeta de Identidad</option>
-                    <option value="CC">Cédula de Ciudadanía</option>
-                    <option value="CE">Cédula de Extranjería</option>
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label">Número de Documento</label>
-                <input type="text" name="documento_estudiante" class="form-control" required>
-            </div>
-        </div>
+                    <?php if (!empty($grados)): ?>
+                        <?php foreach ($grados as $g): ?>
+                            <option value="<?= htmlspecialchars($g['nombre']) ?>">
+                                <?= htmlspecialchars($g['nombre']) ?>
+                            </option>
+                    </option>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <option disabled>No hay grados registrados</option>
+            <?php endif; ?>
+        </select>
+    </div>
+</div>
 
-        <!-- RH y Jornada -->
+
+    <!-- Documento -->
+<div class="row mb-3">
+    <div class="col-md-6">
+        <label>Tipo de documento</label>
+        <select name="tipo_documento" class="form-select" required> 
+            <option value="">Seleccione...</option>
+            <?php foreach ($tiposDocumento as $doc): ?>
+                <option value="<?= htmlspecialchars($doc['codigo']) ?>">
+                    <?= htmlspecialchars($doc['descripcion']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+    <div class="col-md-6">
+        <label>Número de documento</label>
+        <input type="text" name="documento_estudiante" class="form-control" required>
+    </div>
+</div>
+
+
+        <!-- Dirección y correo institucional -->
         <div class="row mb-3">
             <div class="col-md-6">
-                <label class="form-label">RH</label>
-                <input type="text" name="rh" class="form-control">
+                <label>Dirección</label>
+                <input type="text" name="direccion" class="form-control">
             </div>
             <div class="col-md-6">
-                <label class="form-label">Jornada</label>
-                <select name="jornada" class="form-select" required>
-                    <option value="">Seleccione...</option>
-                    <option value="Mañana">Mañana</option>
-                    <option value="Tarde">Tarde</option>
-                </select>
+                <label>Correo institucional</label>
+                <input type="email" name="correo_inst" class="form-control">
             </div>
         </div>
 
-        <!-- Asignatura -->
-        <div class="mb-3">
-            <label class="form-label">Asignatura</label>
-            <input type="text" name="asignatura" class="form-control">
-        </div>
+    <!-- RH, jornada, días -->
+<div class="row mb-3">
+    <!-- RH desde la base de datos -->
+    <div class="col-md-4">
+        <label>RH</label>
+        <select name="rh" class="form-select" required>
+            <option value="">Seleccione...</option>
+            <?php foreach ($tiposRh as $rh): ?>
+                <option value="<?= htmlspecialchars($rh['tipo']) ?>">
+                    <?= htmlspecialchars($rh['tipo']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </div>
 
-        <!-- Contacto y correo del estudiante -->
+    <!-- Jornada (puedes también moverla a BD si deseas) -->
+    <div class="col-md-4">
+        <label>Jornada</label>
+        <select name="jornada" class="form-select">
+            <option value="">Seleccione...</option>
+            <option value="Mañana">Mañana</option>
+            <option value="Tarde">Tarde</option>
+        </select>
+    </div>
+
+
+
+        <!-- Rector y nombre de colegio adicional -->
         <div class="row mb-3">
             <div class="col-md-6">
-                <label class="form-label">Correo</label>
+                <label>Nombre del rector</label>
+                <input type="text" name="rector" class="form-control">
+            </div>
+            <div class="col-md-6">
+                <label>Nombre del colegio (texto)</label>
+                <input type="text" name="colegio" class="form-control">
+            </div>
+        </div>
+
+        <!-- Contacto estudiante -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label>Correo personal</label>
                 <input type="email" name="correo" class="form-control">
             </div>
             <div class="col-md-6">
-                <label class="form-label">Número de Contacto</label>
+                <label>Número de contacto</label>
                 <input type="text" name="numero_contacto" class="form-control">
             </div>
         </div>
 
-        <!-- Nombre y contacto del acudiente -->
+        <!-- Acudiente -->
         <div class="row mb-3">
             <div class="col-md-6">
-                <label class="form-label">Nombre del Acudiente</label>
+                <label>Nombre del acudiente</label>
                 <input type="text" name="nombre" class="form-control">
             </div>
             <div class="col-md-6">
-                <label class="form-label">Contacto del Acudiente</label>
+                <label>Teléfono del acudiente</label>
                 <input type="text" name="contacto" class="form-control">
             </div>
         </div>
 
         <!-- Observaciones -->
         <div class="mb-3">
-            <label class="form-label">Observaciones</label>
-            <textarea name="observaciones" class="form-control" rows="3"></textarea>
+            <label>Observaciones</label>
+            <textarea name="observaciones" class="form-control"></textarea>
         </div>
 
         <!-- Botón -->
         <button type="submit" class="btn btn-success">
-            <i class="bi bi-check-circle-fill me-1"></i> Registrar Estudiante
+            <i class="bi bi-check-circle-fill me-1"></i> Registrar
         </button>
     </form>
 </div>
 
-<!-- ✅ Footer -->
-<footer class="text-center mt-5 py-3 bg-dark text-white">
-    <small>Sistema Colegio - Desarrollado por Daniel Zapata © <?= date('Y') ?></small>
-</footer>
 
-</body>
-</html>

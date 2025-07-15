@@ -2,11 +2,9 @@
 require_once 'models/Colegio.php';
 $colegioModel = new Colegio();
 $colegios = $colegioModel->obtenerTodos();
+if (session_status() === PHP_SESSION_NONE) session_start();
 ?>
 
-
-
-<?php //session_start(); ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -99,6 +97,21 @@ $colegios = $colegioModel->obtenerTodos();
         .dark-mode .logo-text {
             color: #0d6efd;
         }
+
+        .register-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .register-link a {
+            text-decoration: none;
+            color: #0d6efd;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body class="animate__animated animate__fadeIn">
@@ -131,8 +144,8 @@ $colegios = $colegioModel->obtenerTodos();
     <form method="POST" action="index.php?page=procesar_login">
 
         <div class="mb-3">
-            <label for="usuario" class="form-label">Usuario</label>
-            <input type="text" name="usuario" id="usuario" class="form-control" required>
+            <label for="correo" class="form-label">Correo electrónico</label>
+            <input type="email" name="correo" id="correo" class="form-control" required>
         </div>
 
         <div class="mb-3">
@@ -145,7 +158,6 @@ $colegios = $colegioModel->obtenerTodos();
             </div>
         </div>
 
-        <!-- ✅ Recordar sesión -->
         <div class="mb-3 form-check">
             <input type="checkbox" class="form-check-input" id="recordar">
             <label class="form-check-label" for="recordar">Recordar sesión</label>
@@ -154,9 +166,14 @@ $colegios = $colegioModel->obtenerTodos();
         <button type="submit" class="btn btn-login w-100">
             <i class="bi bi-box-arrow-in-right me-2"></i>Entrar al Sistema
         </button>
+
+        <!-- ✅ Enlace a Registro -->
+        <div class="register-link">
+            ¿No tienes cuenta?
+            <a href="index.php?page=registroNuevoUsuario">Regístrate aquí</a>
+        </div>
     </form>
 
-    <!-- ✅ Footer institucional -->
     <div class="footer-login">
         © <?= date('Y') ?> Sistema Colegio - Desarrollado por Daniel Stiven Zapata
     </div>
@@ -164,7 +181,6 @@ $colegios = $colegioModel->obtenerTodos();
 
 <!-- ✅ Scripts -->
 <script>
-    // Mostrar / ocultar contraseña
     document.getElementById("togglePassword").addEventListener("click", function () {
         const input = document.getElementById("clave");
         const icon = document.getElementById("iconToggle");
@@ -177,7 +193,6 @@ $colegios = $colegioModel->obtenerTodos();
         }
     });
 
-    // Modo oscuro toggle
     document.getElementById("darkSwitch").addEventListener("change", function () {
         document.body.classList.toggle("dark-mode");
     });

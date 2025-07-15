@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../confi/database.php'; // Asegúrate que esta ruta sea correcta
+require_once 'confi/database.php';  // SIEMPRE usar require_once
+
 
 class Colegio {
     private $conn;
@@ -24,10 +25,13 @@ class Colegio {
     }
 
     // 🔹 Buscar todos los colegios
-   public function obtenerTodos() {
+// ✅ Colegio.php (modelo)
+// ✅ Colegio.php (modelo)
+public function obtenerTodos() {
     $stmt = $this->conn->query("SELECT * FROM colegios");
-    return $stmt->fetchAll(PDO::FETCH_ASSOC); // ✅ IMPORTANTE: return aquí
+    return $stmt->fetchAll(PDO::FETCH_ASSOC); // ← Correcto
 }
+
 
 
     // 🔹 Buscar colegio por ID
