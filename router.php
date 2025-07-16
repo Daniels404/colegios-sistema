@@ -91,6 +91,10 @@ switch ($route) {
         require_once 'controllers/EstudianteController.php';
         require_once 'controllers/ColegioController.php';
         require_once 'models/Usuario.php';
+        require_once 'models/Profesor.php';
+        $profesorModel = new Profesor();
+        $totalProfesores = $profesorModel->contar();
+
 
         $controllerEst = new EstudianteController();
         $controllerCol = new ColegioController();
@@ -180,12 +184,12 @@ case 'profesores':
     $controller = new ProfesorController();
     $controller->listar();
     break;
-
 case 'registro_profesor':
     require_once 'controllers/ProfesorController.php';
     $controller = new ProfesorController();
     $controller->mostrarFormulario();
     break;
+
 
 case 'guardar_profesor':
     require_once 'controllers/ProfesorController.php';

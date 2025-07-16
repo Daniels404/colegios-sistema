@@ -29,7 +29,7 @@
                     <td><?= htmlspecialchars($p['rh']) ?></td>
                     <td><?= htmlspecialchars($p['numero_estudiantes']) ?></td>
                     <td><?= htmlspecialchars($p['jornada']) ?></td>
-                    <td><?= htmlspecialchars($p['materia'] ?? 'No asignada') ?></td>
+                    <td><span class="badge bg-info"><?= htmlspecialchars($p['materia']) ?></span></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
