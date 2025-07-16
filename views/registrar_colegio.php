@@ -1,6 +1,5 @@
-
-
 <?php
+
 if (session_status() === PHP_SESSION_NONE) session_start();
 include 'views/layout/header.php';
 ?>
@@ -51,12 +50,13 @@ $colegios = $modelo->obtenerTodos();
 
 <!-- Botón para mostrar/ocultar el formulario -->
 <div class="text-center mb-4">
-    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#formularioColegio" aria-expanded="false" aria-controls="formularioColegio">
+    <button class="btn btn-primary" type="button" id="mostrarFormulario">
         <i class="bi bi-plus-circle me-1"></i>Registrar nuevo colegio
     </button>
 </div>
 
-<div class="collapse" id="formularioColegio">
+<!-- Formulario SIEMPRE oculto hasta que se presione el botón -->
+<div id="formularioColegio" style="display:none;">
     <form method="POST" action="index.php?page=guardar_colegio" class="bg-white p-4 rounded shadow mx-auto" style="max-width: 600px;">
         <div class="mb-3">
             <label for="nombre" class="form-label">Nombre del colegio</label>
@@ -87,5 +87,12 @@ $colegios = $modelo->obtenerTodos();
         </div>
     </form>
 </div>
+
+<script>
+    document.getElementById('mostrarFormulario').onclick = function() {
+        var form = document.getElementById('formularioColegio');
+        form.style.display = (form.style.display === 'none') ? 'block' : 'none';
+    };
+</script>
 
 <?php include 'views/layout/footer.php'; ?>

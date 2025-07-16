@@ -72,7 +72,7 @@ include 'views/layout/header.php';
                         </tr>
                     <?php endforeach; ?>
                     <?php if (empty($usuarios)): ?>
-                        <tr>
+                        <tr
                             <td colspan="5" class="text-muted">No hay usuarios registrados.</td>
                         </tr>
                     <?php endif; ?>

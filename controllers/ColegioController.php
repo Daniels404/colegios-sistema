@@ -16,7 +16,7 @@ class ColegioController {
     public function mostrarFormulario() {
         $modelo = new Colegio();
         $colegios = $modelo->obtenerTodos(); // ✅ obtiene los colegios registrados
-        require 'views/preregistro.php';     // ✅ se los pasa a la vista
+       require 'views/registrar_colegio.php'; // Esta vista debe contener SOLO el formulario
     }
 
     public function guardar() {

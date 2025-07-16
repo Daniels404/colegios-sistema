@@ -1,4 +1,3 @@
-
 <?php
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -101,33 +100,43 @@ if (!isset($total)) $total = 0;
                 <div class="card-body text-center">
                     <h5 class="card-title text-warning mb-3" style="font-size:1.25rem;"><i class="bi bi-building me-2"></i>Total Colegios</h5>
                     <p class="card-text fw-bold text-warning mb-2" style="font-size:2.8rem; line-height:1;"><?= $totalColegios ?></p>
-                    <a href="index.php?page=registrar_colegio" class="btn btn-sm dashboard-btn mt-3"><i class="bi bi-building-add me-1"></i>Registrar Colegio</a>
+                    <!-- Botón para registrar colegio -->
+                    <a href="index.php?page=registrar_colegio" class="btn btn-sm dashboard-btn mt-3">
+                        <i class="bi bi-building-add me-1"></i>Registrar Colegio
+                    </a>
                 </div>
             </div>
         </div>
-
     </div>
 
-   
-   
-                </div>
-            </div>
-        </div>
 
-        <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'admin'): ?>
-        <!-- Tarjeta: Gestión de Usuarios (centrada, solo admin) -->
-        <div class="row justify-content-center mt-4">
-            <div class="col-12 col-sm-8 col-md-6 col-lg-4 d-flex align-items-stretch">
-                <div class="card dashboard-card dashboard-card-admin border-0 w-100">
-                    <div class="card-body text-center py-3">
-                        <h5 class="fw-bold mb-2" style="font-size:1.15rem;"><i class="bi bi-person-lines-fill me-2"></i>Gestión de Usuarios</h5>
-                        <a href="index.php?page=usuarios" class="btn btn-sm dashboard-btn mt-2"><i class="bi bi-people me-1"></i>Ver usuarios</a>
+
+                 <!-- Tarjeta de Materias -->
+         <div class="col-md-4">
+             <div class="card shadow-sm border-start border-danger border-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-journal-text me-2"></i> Materias</h5>
+                         <p class="card-text">Gestiona las asignaturas y sus profesores asignados.</p>
+                        <a href="index.php?page=materias" class="btn btn-danger mt-2 text-white">Ver materias</a>
                     </div>
+            </div>
+         </div>
+
+
+    <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'admin'): ?>
+    <!-- Tarjeta: Gestión de Usuarios (centrada, solo admin) -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-4 d-flex align-items-stretch">
+            <div class="card dashboard-card dashboard-card-admin border-0 w-100">
+                <div class="card-body text-center py-3">
+                    <h5 class="fw-bold mb-2" style="font-size:1.15rem;"><i class="bi bi-person-lines-fill me-2"></i>Gestión de Usuarios</h5>
+                    <a href="index.php?page=usuarios" class="btn btn-sm dashboard-btn mt-2"><i class="bi bi-people me-1"></i>Ver usuarios</a>
                 </div>
             </div>
         </div>
-        <?php endif; ?>
     </div>
+    <?php endif; ?>
 </div>
 
-
+</body>
+</html>

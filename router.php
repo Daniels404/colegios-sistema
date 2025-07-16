@@ -174,6 +174,45 @@ case 'eliminar_usuario':
     break;
 
 
+// PROFESORES
+case 'profesores':
+    require_once 'controllers/ProfesorController.php';
+    $controller = new ProfesorController();
+    $controller->listar();
+    break;
+
+case 'registro_profesor':
+    require_once 'controllers/ProfesorController.php';
+    $controller = new ProfesorController();
+    $controller->mostrarFormulario();
+    break;
+
+case 'guardar_profesor':
+    require_once 'controllers/ProfesorController.php';
+    $controller = new ProfesorController();
+    $controller->guardar();
+    break;
+
+// MATERIAS
+case 'materias':
+    require_once 'controllers/MateriaController.php';
+    $controller = new MateriaController();
+    $controller->listar();
+    break;
+
+case 'registro_materia':
+    require_once 'controllers/MateriaController.php';
+    $controller = new MateriaController();
+    $controller->mostrarFormulario();
+    break;
+
+case 'guardar_materia':
+    require_once 'controllers/MateriaController.php';
+    $controller = new MateriaController();
+    $controller->guardar();
+    break;
+
+
 
     default:
         echo "Página no encontrada";
