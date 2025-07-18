@@ -75,7 +75,7 @@ if (!isset($materiasPorProfesor)) $materiasPorProfesor = [];
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item"><a class="nav-link active" href="index.php?page=dashboard"><i class="bi bi-house-door-fill me-1"></i>Inicio</a></li>
                 <li class="nav-item"><a class="nav-link" href="index.php?page=registro"><i class="bi bi-person-plus-fill me-1"></i>Registrar Estudiante</a></li>
-                <li class="nav-item"><a class="nav-link" href="index.php?page=listado"><i class="bi bi-card-list me-1"></i>Listado Estudiantes</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.php?page=listado_estudiantes">Ver Estudiantes</a></li>
                 <li class="nav-item"><a class="nav-link" href="index.php?page=registrar_colegio"><i class="bi bi-building-add me-1"></i>Registrar Colegio</a></li>
                 <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'admin'): ?>
                     <li class="nav-item"><a class="nav-link" href="index.php?page=usuarios"><i class="bi bi-people-fill me-1"></i>Usuarios</a></li>
@@ -141,7 +141,7 @@ if (!isset($materiasPorProfesor)) $materiasPorProfesor = [];
         </div>
     </div>
 
-    <!-- Gráfico desplegable -->
+    <!-- Gráfico desplegable 
     <div class="container mt-5">
         <div class="accordion" id="accordionGrafico">
             <div class="accordion-item shadow">
@@ -161,7 +161,7 @@ if (!isset($materiasPorProfesor)) $materiasPorProfesor = [];
                 </div>
             </div>
         </div>
-    </div>
+    </div>  -->
 
     <!-- Admin: Gestión de usuarios -->
     <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'admin'): ?>

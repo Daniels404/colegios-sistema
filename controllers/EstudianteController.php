@@ -1,86 +1,125 @@
 <?php
 require_once 'models/Estudiante.php';
 require_once 'models/Colegio.php';
-require_once 'models/RH.php';
-require_once 'models/TipoDocumento.php';
 require_once 'models/Grado.php';
 
-
-
-
 class EstudianteController {
-public function mostrarFormulario() {
-    $colegioModel = new Colegio();
-    $colegios = $colegioModel->obtenerTodos();
+    private $model;
 
-    $rhModel = new RH(); // ✅ Instancia del modelo RH
-    $tiposRh = $rhModel->obtenerTodos();
-
-    $tipoDocModel = new TipoDocumento(); // ✅ Instancia del modelo TipoDocumento
-    $tiposDocumento = $tipoDocModel->obtenerTodos();
-
-    $gradoModel = new Grado();
-    $grados = $gradoModel->obtenerTodos();
-
-    require 'views/registro.php';
-}
-
-public function guardar() {
-    $estudiante = new Estudiante();
-
-    // 🔐 Validar que el grado sea uno de los permitidos
-    $grado = trim($_POST['grado'] ?? '');
-    $gradosPermitidos = ['7', '8', '9', '10', '11'];
-
-    if (!in_array($grado, $gradosPermitidos)) {
-        $_SESSION['error'] = 'Grado inválido. Solo se permite del 7 al 11.';
-        header("Location: index.php?page=registro");
-        exit;
+    public function __construct() {
+        $this->model = new Estudiante();
     }
 
-    // 🧩 Armar el arreglo con los datos del formulario
-    $data = [
-        'nombre' => $_POST['nombre'] ?? '',
-        'ficha' => $_POST['ficha'] ?? '',
-        'nombre_alumno' => $_POST['nombre_alumno'] ?? '',
-        'documento_estudiante' => $_POST['documento_estudiante'] ?? '',
-        'grado' => $grado, // ⬅️ Ya viene validado
-        'tipo_documento' => $_POST['tipo_documento'] ?? '',
-        'direccion' => $_POST['direccion'] ?? '',
-        'numero_contacto' => $_POST['numero_contacto'] ?? '',
-        'correo' => $_POST['correo'] ?? '',
-        'correo_inst' => $_POST['correo_inst'] ?? '',
-        'jornada' => $_POST['jornada'] ?? '',
-        'dias' => $_POST['dias'] ?? '',
-        'colegio' => $_POST['colegio'] ?? '',
-        'rector' => $_POST['rector'] ?? '',
-        'observaciones' => $_POST['observaciones'] ?? '',
-        'colegio_id' => $_POST['colegio_id'] ?? null,
-    ];
+    public function index() {
+        $estudiantes = $this->model->obtenerTodos();
+        $mensaje = $_GET['mensaje'] ?? null;
 
-    // ✅ Insertar en la BD
-    $estudiante->registrar($data);
-    header("Location: index.php?page=listado");
-    exit;
-}
+        require 'views/layout/header.php';
+        require 'views/estudiantes/listado_estudiantes.php';
+        require 'views/layout/footer.php';
+    }
 
+    public function registrar() {
+        $colegios = (new Colegio())->obtenerTodos();
+        $grados = (new Grado())->obtenerTodos();
 
-public function mostrarListado() {
-    $modelo = new Estudiante();
-   $estudiantes = $modelo->obtenerTodosConColegios(); // ✅ Sí existe y es correcto
-// 👈 trae los datos
-    require 'views/listado.php';
-}
+        require 'views/layout/header.php';
+        require 'views/estudiantes/registro.php';
+        require 'views/layout/footer.php';
+    }
+
+    public function guardar() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = [
+                'nombre' => $_POST['nombre'] ?? '',
+                'ficha' => $_POST['ficha'] ?? '',
+                'nombre_alumno' => $_POST['nombre_alumno'] ?? '',
+                'documento_estudiante' => $_POST['documento_estudiante'] ?? '',
+                'tipo_documento' => $_POST['tipo_documento'] ?? '',
+                'grado' => $_POST['grado'] ?? '',
+                'colegio_id' => $_POST['colegio_id'] ?? '',
+                'direccion' => $_POST['direccion'] ?? '',
+                'correo_inst' => $_POST['correo_inst'] ?? '',
+                'rh' => $_POST['rh'] ?? '',
+                'jornada' => $_POST['jornada'] ?? '',
+                'rector' => $_POST['rector'] ?? '',
+                'colegio' => $_POST['colegio'] ?? '',
+                'correo' => $_POST['correo'] ?? '',
+                'numero_contacto' => $_POST['numero_contacto'] ?? '',
+                'contacto' => $_POST['contacto'] ?? '',
+                'observaciones' => $_POST['observaciones'] ?? ''
+            ];
+
+            $this->model->registrar($data);
+
+            header('Location: index.php?c=Estudiante&mensaje=Registro+exitoso');
+            exit;
+        }
+    }
+
+    public function editar() {
+        $id = $_GET['id'] ?? null;
+        if (!$id) {
+            echo "ID no proporcionado.";
+            return;
+        }
+
+        $estudiante = $this->model->obtenerPorId($id);
+        $colegios = (new Colegio())->obtenerTodos();
+        $grados = (new Grado())->obtenerTodos();
+
+        require 'views/layout/header.php';
+        require 'views/estudiantes/editar_estudiante.php';
+        require 'views/layout/footer.php';
+    }
+
+    public function actualizar() {
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            session_start();
+
+            $id = $_POST['id'] ?? null;
+            if (!$id) {
+                echo "ID no proporcionado.";
+                return;
+            }
+
+            $data = [
+                'numero_contacto' => $_POST['numero_contacto'] ?? '',
+                'correo' => $_POST['correo'] ?? '',
+                'direccion' => $_POST['direccion'] ?? '',
+                'jornada' => $_POST['jornada'] ?? '',
+                'observaciones' => $_POST['observaciones'] ?? ''
+            ];
+
+            $this->model->actualizarDatosContacto($id, $data);
+
+            $_SESSION['mensaje'] = "✅ Estudiante actualizado correctamente.";
+            header("Location: index.php?c=Estudiante");
+            exit;
+        }
+    }
+
+    public function eliminar() {
+        $id = $_GET['id'] ?? null;
+        if ($id) {
+            $this->model->eliminar($id);
+        }
+        header('Location: index.php?c=Estudiante');
+    }
 
     public function contarEstudiantes() {
-    $estudiante = new Estudiante();
-    return $estudiante->contarEstudiantes();
-}
+        return $this->model->contarEstudiantes();
+    }
 
-public function contarColegios() {
-    $modelo = new Colegio();
-    return $modelo->contarTodos(); // O como hayas llamado al método en el modelo
+    public function crear() {
+        $colegios = (new Colegio())->obtenerTodos();
+        $grados = (new Grado())->obtenerTodos();
+    
+        // Este archivo debe existir en views/estudiantes/
+        require 'views/layout/header.php';
+        require 'views/estudiantes/registro.php';
+        require 'views/layout/footer.php';
+    }
+    
 }
-
-
-}
+    

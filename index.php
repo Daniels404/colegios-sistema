@@ -1,4 +1,6 @@
-
 <?php
-// Solo incluir el router, toda la lógica de rutas y controladores está ahí
+session_start(); // Necesario para acceder a $_SESSION
 require_once 'router.php';
+?>
+
+<?php 

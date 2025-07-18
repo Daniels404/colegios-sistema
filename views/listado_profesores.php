@@ -30,6 +30,12 @@
                     <td><?= htmlspecialchars($p['numero_estudiantes']) ?></td>
                     <td><?= htmlspecialchars($p['jornada']) ?></td>
                     <td><?= htmlspecialchars($p['materia'] ?? 'No asignada') ?></td>
+                    <td>
+                        <a href="index.php?page=editar_profesor&id=<?= $p['id'] ?>" class="btn btn-warning btn-sm"><i class="bi bi-pencil-square"></i> Editar</a>
+                        <a href="index.php?page=eliminar_profesor&id=<?= $p['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este profesor?');"><i class="bi bi-trash"></i> Eliminar</a>
+                    </td>
+                    
+                    
                 </tr>
             <?php endforeach; ?>
         </tbody>
